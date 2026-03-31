@@ -1,2 +1,2 @@
 print("Hello world")
-print("edited by Muhammad Aziz")
+print ("Edited by Muhammad Aziz")
