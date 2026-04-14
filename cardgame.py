@@ -57,3 +57,19 @@ def draw_card(deck):
     deck.pop(index)
 
     return card
+
+def determine_loser(players):
+    lowest_pairs = players[0]["Pairs"]
+    losers = [players[0]["Name"]]
+
+    for player in players[1:]:
+        if player["Pairs"] < lowest_pairs:
+            lowest_pairs = player["Pairs"]
+            losers = [player["Name"]]
+        elif player["Pairs"] == lowest_pairs:
+            losers.append(player["Name"])
+
+    if len(losers) == 1:
+        return losers[0]
+    else:
+        return losers
