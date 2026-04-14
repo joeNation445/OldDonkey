@@ -33,3 +33,27 @@ def create_player(num_player, deck):
         players.append(player)
 
     return players
+
+def draw_card(deck):
+    """
+    Draws a random card from the deck and removes it.
+
+    Args:
+        deck (list): list of remaining cards
+
+    Returns:
+        str: the card that was drawn, or None if deck is empty
+
+    Side effects:
+        removes the drawn card from the deck
+    """
+
+    if len(deck) == 0:
+        return None
+
+    index = random.randint(0, len(deck) - 1)
+    card = deck[index]
+
+    deck.pop(index)
+
+    return card
