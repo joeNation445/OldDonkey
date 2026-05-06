@@ -1,5 +1,25 @@
 import random
 from collections import Counter
+from collections import Counter
+ 
+BURRO_WORD = "BURRO"
+OLD_MAID = "QS"  # Queen of no pair
+ 
+ 
+def create_deck():
+    suits = ["H", "D", "C", "S"]
+    ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
+    deck = [rank + suit for rank in ranks for suit in suits]
+    deck.remove(OLD_MAID)
+    return deck
+
+
+def shuffle(deck):
+    """Fisher-Yates shuffle: every ordering is equally likely."""
+    for i in range(len(deck) - 1, 0, -1):
+        j = random.randint(0, i)
+        deck[i], deck[j] = deck[j], deck[i]
+
 
 def create_player(num_player, deck):
     players = []
