@@ -1,7 +1,7 @@
 BURRO / OLD MAID 🃏
 
 This is a terminal style Python card game inspired by Old Maid kinda with a twwist. Play against AI players, collect matching pairs and try noy to become the BURRO at the end of the game.
-
+🐮🐮🐮
 - Features
 Play against 1–5 AI opponents
 Choose between drawing from the deck or stealing from another player
@@ -37,3 +37,4 @@ Making Pairs
 
 If the card you draw or steal matches the rank of a card already in your hand, a pair is formed. The pair is removed from your hand and your score increases by 1. Game Over
 The game ends when the deck is empty and no more pairs can be made. Final scores are counted, and the player with the fewest pairs is THE BURRO.
+🐎🐎🐎
