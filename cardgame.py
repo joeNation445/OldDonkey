@@ -1,11 +1,10 @@
 import random
 from collections import Counter
-from collections import Counter
- 
+
 BURRO_WORD = "BURRO"
 OLD_MAID = "QS"  # Queen of no pair
- 
- 
+
+
 def create_deck():
     suits = ["H", "D", "C", "S"]
     ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
@@ -23,124 +22,104 @@ def shuffle(deck):
 
 def create_player(num_player, deck):
     players = []
-
     for i in range(num_player):
-        # deal 5 unique cards
-        hand = random.sample(deck, 5)
+        # FIX: pop cards from the deck so players don't share cards
+        hand = []
+        for _ in range(5):
+            if deck:
+                hand.append(deck.pop())
 
-        
-        ranks = [card[:-1] for card in hand]  # remove suit
+        ranks = [card[:-1] for card in hand]
         count = Counter(ranks)
-
         pairs = 0
+        seen = set()
         new_hand = []
 
-        # remove pairs
+        
         for card in hand:
             rank = card[:-1]
+            if rank in seen:
+                continue
+            seen.add(rank)
             if count[rank] >= 2:
                 pairs += count[rank] // 2
-                count[rank] = 0  # prevent double counting
+                remainder = count[rank] % 2
+                kept = 0
+                for c in hand:
+                    if c[:-1] == rank and kept < remainder:
+                        new_hand.append(c)
+                        kept += 1
             else:
                 new_hand.append(card)
 
         player = {
-            "Hand": new_hand,
-            "Pairs": pairs,
-            "Remaining": len(new_hand)
+            "name": f"Player {i + 1}",  # FIX: added missing "name" key
+            "hand": new_hand,           
+            "pairs": pairs,            
         }
-
         players.append(player)
-
     return players
+
 
 def draw_card(deck):
     """
     Draws a random card from the deck and removes it.
-
     Args:
         deck (list): list of remaining cards
-
     Returns:
         str: the card that was drawn, or None if deck is empty
-
     Side effects:
         removes the drawn card from the deck
     """
-
     if len(deck) == 0:
         return None
-
     index = random.randint(0, len(deck) - 1)
     card = deck[index]
-
     deck.pop(index)
-
     return card
 
+
 def determine_loser(players):
-    lowest_pairs = players[0]["Pairs"]
-    losers = [players[0]["Name"]]
-
+    lowest_pairs = players[0]["pairs"]      
+    losers = [players[0]["name"]]           
     for player in players[1:]:
-        if player["Pairs"] < lowest_pairs:
-            lowest_pairs = player["Pairs"]
-            losers = [player["Name"]]
-        elif player["Pairs"] == lowest_pairs:
-            losers.append(player["Name"])
-
+        if player["pairs"] < lowest_pairs:  
+            lowest_pairs = player["pairs"]   
+            losers = [player["name"]]        
+        elif player["pairs"] == lowest_pairs:
+            losers.append(player["name"])    
     if len(losers) == 1:
         return losers[0]
     else:
         return losers
 
 
-
 def player_turn(current_player, players, deck):
     """
-Handles one players turn: draws, asks, take cards, and remove pairs.
-
-Args:
-    current_player, players, deck
-
-Returns:
-    Updated current_player, players, deck
+    Handles one player's turn: draws a card, checks for a pair, removes it if found.
+    Args:
+        current_player, players, deck
+    Returns:
+        Updated current_player, players, deck
     """
+   
+    drawn = draw_card(deck)
+    if drawn is None:
+        return current_player, players, deck
 
-    if deck:
-        drawn_card = deck.pop(0)
-        current_player["hand"].append(drawn_card)
+    drawn_rank = drawn[:-1]
 
-    other_player = None
-    for player in players:
-        if player != current_player:
-            other_player = player
+   
+    match = None
+    for card in current_player["hand"]:     
+        if card[:-1] == drawn_rank:
+            match = card
             break
 
-    if current_player["hand"] and other_player is not None:
-        asked_rank = current_player["hand"][0]
-
-        taken_cards = []
-        for card in other_player["hand"]:
-            if card == asked_rank:
-                taken_cards.append(card)
-
-        for card in taken_cards:
-            other_player["hand"].remove(card)
-            current_player["hand"].append(card)
-
-    rank_counts = {}
-    for card in current_player["hand"]:
-        if card in rank_counts:
-            rank_counts[card] += 1
-        else:
-            rank_counts[card] = 1
-
-    new_hand = []
-    for card in current_player["hand"]:
-        if rank_counts[card] % 2 != 0:
-            new_hand.append(card)
-
-    current_player["hand"] = new_hand
+    if match:
+        current_player["hand"].remove(match)
+        current_player["pairs"] += 1       
+    else:
+        current_player["hand"].append(drawn)
 
     return current_player, players, deck
