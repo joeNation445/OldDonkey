@@ -123,3 +123,34 @@ def player_turn(current_player, players, deck):
         current_player["hand"].append(drawn)
 
     return current_player, players, deck
+
+
+
+
+def display_hand(player):
+    print(f"  Your hand: {player['hand']}")
+    print(f"  Pairs collected: {player['pairs']}")
+ 
+ 
+def display_scores(players):
+    print("\nFinal scores:")
+    for player in players:
+        print(f"  {player['name']}: {player['pairs']} pair(s)")
+ 
+ 
+def announce_loser(loser):
+    if isinstance(loser, list):
+        print(f"\nIt's a tie! {', '.join(loser)} are all the {BURRO_WORD}!")
+    else:
+        print(f"\n{loser} is the {BURRO_WORD}! (fewest pairs)")
+ 
+ 
+def get_num_players():
+    while True:
+        try:
+            num = int(input("How many players total? (2-6): "))
+            if 2 <= num <= 6:
+                return num
+            print("Please enter a number between 2 and 6.")
+        except ValueError:
+            print("Please enter a valid number.")
