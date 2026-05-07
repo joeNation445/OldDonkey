@@ -6,6 +6,18 @@ OLD_MAID = "QS"
 
 
 def create_deck():
+    """
+    Creates a standard 52-card deck and removes the Old Maid (Queen of Spades).
+
+    Arguments:
+        None
+
+    Returns:
+        list: A list of strings representing the playing cards.
+
+    Side Effects:
+        None
+    """
     suits = ["H", "D", "C", "S"]
     ranks = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
     deck = [rank + suit for rank in ranks for suit in suits]
@@ -14,13 +26,38 @@ def create_deck():
 
 
 def shuffle(deck):
-    """Fisher-Yates shuffle: every ordering is equally likely."""
+    """
+    Randomizes the order of the cards in the deck using the Fisher-Yates shuffle algorithm.
+    Every ordering is equally likely.
+
+    Arguments:
+        deck (list): The list of cards to shuffle.
+
+    Returns:
+        None
+
+    Side Effects:
+        Mutates the 'deck' list in place by changing the order of its elements.
+    """
     for i in range(len(deck) - 1, 0, -1):
         j = random.randint(0, i)
         deck[i], deck[j] = deck[j], deck[i]
 
 
 def create_player(num_player, deck):
+    """
+    Initializes players, deals 5 cards to each, and removes any initial pairs from their hands.
+
+    Arguments:
+        num_player (int): The number of players in the game.
+        deck (list): The main deck of cards.
+
+    Returns:
+        list: A list of player dictionaries containing their name, hand, pair count, and peek status.
+
+    Side Effects:
+        Mutates the 'deck' list by popping (removing) cards to deal to the players.
+    """
     players = []
     for i in range(num_player):
         hand = []
@@ -62,8 +99,16 @@ def create_player(num_player, deck):
 
 def draw_card(deck):
     """
-    Draws a random card from the deck and removes it.
-    Returns None if deck is empty.
+    Draws a random card from the available deck.
+
+    Arguments:
+        deck (list): The main deck of cards.
+
+    Returns:
+        str or None: The drawn card string, or None if the deck is empty.
+
+    Side Effects:
+        Mutates the 'deck' list by removing the drawn card.
     """
     if len(deck) == 0:
         return None
@@ -74,6 +119,18 @@ def draw_card(deck):
 
 
 def determine_loser(players):
+    """
+    Identifies the player(s) with the fewest pairs at the end of the game.
+
+    Arguments:
+        players (list): A list of player dictionaries.
+
+    Returns:
+        str or list: A string of the loser's name, or a list of names if there is a tie.
+
+    Side Effects:
+        None
+    """
     lowest_pairs = players[0]["pairs"]
     losers = [players[0]["name"]]
     for player in players[1:]:
@@ -90,7 +147,19 @@ def determine_loser(players):
 
 def player_turn(current_player, players, deck):
     """
-    Handles one player's turn: draws a card, checks for a pair, removes it if found.
+    Handles one standard player's turn: draws a card, checks for a pair, and removes it if found.
+
+    Arguments:
+        current_player (dict): The dictionary of the player taking the turn.
+        players (list): A list of all player dictionaries.
+        deck (list): The main deck of cards.
+
+    Returns:
+        tuple: A tuple containing the updated (current_player, players, deck).
+
+    Side Effects:
+        Mutates the 'deck' list by removing a card.
+        Mutates the 'current_player' dictionary by updating their hand and pairs count.
     """
     drawn = draw_card(deck)
     if drawn is None:
@@ -114,7 +183,20 @@ def player_turn(current_player, players, deck):
 
 
 def is_game_over(deck, players):
-  
+    """
+    Checks if the game has reached its end condition. The game is over when the deck 
+    is empty AND no further pairs can be made among any players' hands.
+
+    Arguments:
+        deck (list): The main deck of cards.
+        players (list): A list of all player dictionaries.
+
+    Returns:
+        bool: True if the game is over, False otherwise.
+
+    Side Effects:
+        None
+    """
     if deck:
         return False
 
@@ -127,17 +209,53 @@ def is_game_over(deck, players):
 
 
 def display_hand(player):
+    """
+    Prints a player's current hand and number of pairs to the console.
+
+    Arguments:
+        player (dict): The dictionary of the player whose hand is being displayed.
+
+    Returns:
+        None
+
+    Side Effects:
+        Prints output to standard output (the console).
+    """
     print(f"  Your hand: {player['hand']}")
     print(f"  Pairs collected: {player['pairs']}")
 
 
 def display_scores(players):
+    """
+    Prints the final pair counts for all players to the console.
+
+    Arguments:
+        players (list): A list of all player dictionaries.
+
+    Returns:
+        None
+
+    Side Effects:
+        Prints output to standard output (the console).
+    """
     print("\nFinal scores:")
     for player in players:
         print(f"  {player['name']}: {player['pairs']} pair(s)")
 
 
 def announce_loser(loser):
+    """
+    Prints the name of the losing player(s) to the console.
+
+    Arguments:
+        loser (str or list): The name of the losing player, or a list of names if tied.
+
+    Returns:
+        None
+
+    Side Effects:
+        Prints output to standard output (the console).
+    """
     if isinstance(loser, list):
         print(f"\nIt's a tie! {', '.join(loser)} are all the {BURRO_WORD}!")
     else:
@@ -145,6 +263,19 @@ def announce_loser(loser):
 
 
 def get_num_players():
+    """
+    Prompts the user to enter a valid number of players (between 2 and 6).
+
+    Arguments:
+        None
+
+    Returns:
+        int: The validated number of players entered by the user.
+
+    Side Effects:
+        Blocks execution waiting for user input (stdin).
+        Prints prompts and error messages to standard output (stdout).
+    """
     while True:
         try:
             num = int(input("How many players total? (2-6): "))
@@ -156,7 +287,21 @@ def get_num_players():
 
 
 def try_pair(player, drawn):
-    """Check if drawn card pairs with anything in hand. Remove pair if so."""
+    """
+    Checks if a newly obtained card pairs with any existing card in the player's hand.
+    If it does, the pair is removed; if not, the card is added to the hand.
+
+    Arguments:
+        player (dict): The dictionary of the player receiving the card.
+        drawn (str): The string representing the card obtained.
+
+    Returns:
+        str or None: The matching card from the hand if a pair is made, otherwise None.
+
+    Side Effects:
+        Mutates the 'player' dictionary by updating their hand (adding or removing a card) 
+        and incrementing their pairs count if a match is found.
+    """
     drawn_rank = drawn[:-1]
     match = None
     for card in player["hand"]:
@@ -173,6 +318,24 @@ def try_pair(player, drawn):
 
 
 def human_turn(player, players, deck):
+    """
+    Handles the interactive terminal menu and actions for the human player's turn.
+
+    Arguments:
+        player (dict): The dictionary of the human player.
+        players (list): A list of all player dictionaries in the game.
+        deck (list): The main deck of cards.
+
+    Returns:
+        None
+
+    Side Effects:
+        Blocks execution waiting for user input (stdin).
+        Prints menus, choices, and outcomes to standard output (stdout).
+        Mutates the 'deck' list if a card is drawn.
+        Mutates the 'player' dictionary based on drawn/stolen cards and used peek ability.
+        Mutates opponent player dictionaries if a card is stolen.
+    """
     print(f"\n--- Your turn ---")
     display_hand(player)
 
@@ -243,7 +406,19 @@ def human_turn(player, players, deck):
 
 
 def pick_opponent(opponents):
-    """Let the human choose which opponent to steal from."""
+    """
+    Prompts the human player to select an opponent from the provided list.
+
+    Arguments:
+        opponents (list): A list of opponent player dictionaries who have cards.
+
+    Returns:
+        dict: The selected opponent player dictionary.
+
+    Side Effects:
+        Blocks execution waiting for user input (stdin).
+        Prints choices to standard output (stdout).
+    """
     print("\nChoose a player:")
     for i, opp in enumerate(opponents, 1):
         print(f"  {i}. {opp['name']} ({len(opp['hand'])} card(s))")
@@ -258,7 +433,21 @@ def pick_opponent(opponents):
 
 
 def pick_hidden_card(target, player):
-    """Show the target's hand as hidden slots and let the human pick one."""
+    """
+    Displays an opponent's hand as hidden slots and prompts the human to select one to steal.
+
+    Arguments:
+        target (dict): The dictionary of the opponent being stolen from.
+        player (dict): The dictionary of the human player (unused in function body, but kept for signature).
+
+    Returns:
+        str: The card string that was selected and stolen.
+
+    Side Effects:
+        Blocks execution waiting for user input (stdin).
+        Prints the hidden hand to standard output (stdout).
+        Mutates the 'target' dictionary by popping (removing) the selected card from their hand.
+    """
     print(f"\n{target['name']}'s cards (face down):")
     for i in range(len(target["hand"])):
         print(f"  {i + 1}. ?")
@@ -273,6 +462,23 @@ def pick_hidden_card(target, player):
 
 
 def ai_turn(player, players, deck):
+    """
+    Executes an automated turn for a non-human player, randomly choosing to draw or steal.
+
+    Arguments:
+        player (dict): The dictionary of the AI player taking the turn.
+        players (list): A list of all player dictionaries.
+        deck (list): The main deck of cards.
+
+    Returns:
+        None
+
+    Side Effects:
+        Prints turn actions and outcomes to standard output (stdout).
+        Mutates the 'deck' list if the AI draws.
+        Mutates the 'player' dictionary by updating hand and pairs.
+        Mutates a target opponent's dictionary if the AI decides to steal.
+    """
     print(f"\n--- {player['name']}'s turn ---")
 
     
@@ -306,6 +512,19 @@ def ai_turn(player, players, deck):
 
 
 def setup_game():
+    """
+    Initializes the game state by getting player counts, building the deck, and creating players.
+
+    Arguments:
+        None
+
+    Returns:
+        tuple: A tuple containing the list of player dictionaries and the deck list.
+
+    Side Effects:
+        Calls functions that block for user input (stdin).
+        Prints welcome messages and setup status to standard output (stdout).
+    """
     print("=" * 40)
     print("    Welcome to BURRO / OLD MAID!")
     print("=" * 40)
@@ -320,6 +539,19 @@ def setup_game():
 
 
 def play_game():
+    """
+    The main game loop. Runs setup, cycles through player turns, and handles the end game.
+
+    Arguments:
+        None
+
+    Returns:
+        None
+
+    Side Effects:
+        Continuously calls functions that block for user input (stdin) and print to console (stdout).
+        Heavily mutates the entire game state (deck and players) until the game finishes.
+    """
     players, deck = setup_game()
     round_num = 1
 
