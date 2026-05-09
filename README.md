@@ -38,3 +38,14 @@ Making Pairs
 If the card you draw or steal matches the rank of a card already in your hand, a pair is formed. The pair is removed from your hand and your score increases by 1. Game Over
 The game ends when the deck is empty and no more pairs can be made. Final scores are counted, and the player with the fewest pairs is THE BURRO.
 🐎🐎🐎
+Sources used:
+Old Maid — Inspiration for the core gameplay loop
+https://bicyclecards.com/how-to-play/old-maid/
+GeeksforGeeks – Fisher–Yates Shuffle Algorithm
+ Explanation of the Fisher–Yates shuffle algorithm and how randomized shuffling works in programming.
+Python Documentation – random.shuffle()
+https://www.geeksforgeeks.org/dsa/shuffle-a-given-array-using-fisher-yates-shuffle-algorithm/
+ Official Python documentation for the shuffle function used to randomize the card deck.
+https://docs.python.org/3/library/random.html#random.shuffle
+Python Documentation – Dictionaries
+https://docs.python.org/3/tutorial/datastructures.html#dictionaries
